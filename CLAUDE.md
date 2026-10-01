@@ -44,6 +44,7 @@ Scoping phases complete: API contract consumed (all 16 endpoints verified agains
 - **Docs**: Same-session updates to BUILD_PLAN.md, CLAUDE.md, README when decisions change
 - **Accessibility**: jsx-a11y lint from scaffold; vitest-axe with test setup; manual keyboard/screen reader pass is a Phase 6 ship gate
 - **Storybook**: Logged as stretch goal in polish phase only
+- **API types**: `npm run generate:api` regenerates `src/api/schema.d.ts` from `./openapi.yaml` (openapi-typescript). Rerun and commit after merging each OpenAPI sync PR; never hand-edit the generated file
 
 ## Open Questions
 
