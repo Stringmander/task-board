@@ -32,7 +32,7 @@ Consumer-facing React/TypeScript frontend consuming the existing task-api backen
 | Language     | TypeScript      | Strict mode                        |
 | UI           | React           | 18+                                |
 | Router       | React Router v7 | Library mode                       |
-| Server state | TanStack Query  | v6 (undisputed 2026 standard)      |
+| Server state | TanStack Query  | v5 (latest major; no v6 exists)    |
 | Styling      | Tailwind CSS    | v4                                 |
 | Components   | shadcn/ui       | Copy-paste into repo; own all code |
 

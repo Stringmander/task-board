@@ -40,6 +40,10 @@ Use **Vite + React** for the Task Board Frontend.
 Approved by: Nick
 Review date: 2026-09-30
 
+### Deviations
+
+- **2026-10-01: TanStack Query v5, not v6.** The Implications above name TanStack Query v6, but no v6 exists on npm (no stable, prerelease, or dist-tag); the latest major is v5 (5.104.0 at scaffold time). Installed `@tanstack/react-query@^5`. The choice of TanStack Query is unaffected; only the version label was wrong. BUILD_PLAN.md corrected the same day.
+
 ---
 
 ## 2026-09-30: Accessibility Commitment — WCAG 2.2 Level AA
