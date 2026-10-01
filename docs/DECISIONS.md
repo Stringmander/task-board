@@ -77,6 +77,10 @@ Semantic HTML first (~80% of a11y), focus management on route changes and modal 
 Approved by: Nick
 Review date: 2026-09-30
 
+### Deviations
+
+- **2026-10-01: ESLint pinned to 9.** At scaffold time the latest ESLint was 10.11.0, while eslint-plugin-jsx-a11y 6.10.2 (latest, last published 2024-10) declares peer `eslint: ^3 … ^9`. Per the compatibility note above, ESLint is pinned to `^9` (resolved 9.39.5) with `@eslint/js@^9`. Caveat: npm marks ESLint 9.39.5 as deprecated ("no longer supported"), so this pin is a holding position, not a resting one. Revisit when jsx-a11y ships ESLint 10 support.
+
 ---
 
 ## 2026-10-01: OpenAPI Spec Sync Policy
