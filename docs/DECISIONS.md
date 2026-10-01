@@ -84,6 +84,7 @@ Review date: 2026-09-30
 ### Deviations
 
 - **2026-10-01: ESLint pinned to 9.** At scaffold time the latest ESLint was 10.11.0, while eslint-plugin-jsx-a11y 6.10.2 (latest, last published 2024-10) declares peer `eslint: ^3 … ^9`. Per the compatibility note above, ESLint is pinned to `^9` (resolved 9.39.5) with `@eslint/js@^9`. Caveat: npm marks ESLint 9.39.5 as deprecated ("no longer supported"), so this pin is a holding position, not a resting one. Revisit when jsx-a11y ships ESLint 10 support.
+- **2026-10-01: Clarification, vitest-axe timing (no change of plan).** "5 (with test setup)" in the Tooling Layers table refers to when component axe tests are written, not when the tool is installed. The tooling was installed and wired during the Phase 4 scaffold (matcher registration in `src/test/setup.ts`, one pipeline-proving test on `ApiStatus`). Axe assertions for app components are written alongside those components in Phase 5, as planned.
 
 ---
 

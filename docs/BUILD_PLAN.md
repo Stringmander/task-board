@@ -18,7 +18,7 @@ Consumer-facing React/TypeScript frontend consuming the existing task-api backen
 
 | Phase                         | Status   | Deliverable                                                                           |
 | ----------------------------- | -------- | ------------------------------------------------------------------------------------- |
-| Phase 1: Consume API Contract | COMPLETE | OpenAPI spec fully typed; all 16 endpoints cataloged; auth flow mapped; CORS resolved |
+| Phase 1: Consume API Contract | COMPLETE | OpenAPI spec fully typed; all 15 endpoints cataloged; auth flow mapped; CORS resolved |
 | Phase 2: Stack Evaluation     | COMPLETE | Vite + React selected after 2026 market-data verification; alternatives documented    |
 | Phase 3: Framework Decision   | COMPLETE | Decision records logged (see docs/DECISIONS.md); plan documents drafted               |
 

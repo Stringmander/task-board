@@ -4,7 +4,7 @@
 
 **Phase 4: Scaffold & Authenticate** — READY TO START
 
-Scoping phases complete: API contract consumed (all 16 endpoints verified against the regenerated OpenAPI spec), stack evaluated against 2026 market data, framework and accessibility decisions logged.
+Scoping phases complete: API contract consumed (all 15 endpoints verified against the regenerated OpenAPI spec), stack evaluated against 2026 market data, framework and accessibility decisions logged.
 
 ## Repository Documents
 
