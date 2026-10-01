@@ -2,7 +2,7 @@
 
 ## Current Status
 
-**Phase 4: Scaffold & Authenticate** — READY TO START
+**Phase 4: Scaffold & Authenticate** — IN PROGRESS (scaffold complete 2026-10-01; auth next)
 
 Scoping phases complete: API contract consumed (all 15 endpoints verified against the regenerated OpenAPI spec), stack evaluated against 2026 market data, framework and accessibility decisions logged.
 
@@ -24,18 +24,16 @@ Scoping phases complete: API contract consumed (all 15 endpoints verified agains
 | Accessibility commitment   | WCAG 2.2 AA target; layered tooling plus manual verification; decision record logged                    |
 | Plan documents             | BUILD_PLAN.md and CLAUDE.md drafted and approved                                                        |
 | OpenAPI spec sync          | `./openapi.yaml` vendored from task-api; weekly GitHub Action opens a sync PR on upstream change        |
+| Phase 4 scaffold           | Completed 2026-10-01; Vite + TS strict, Router v7, TanStack Query v5, Tailwind/shadcn, lint, test stack |
 
 ## What's Next
 
-| Step                                                        | Owner                      | Completion Signal                                                  |
-| ----------------------------------------------------------- | -------------------------- | ------------------------------------------------------------------ |
-| Initialize Vite + React project                             | AI executor                | npm run dev runs successfully                                      |
-| Wire React Router (4 routes)                                | AI executor                | Navigation works between views                                     |
-| Set up TanStack Query client                                | AI executor                | Data fetching example works                                        |
-| Integrate shadcn/ui primitives                              | AI executor                | Button, input, modal components available                          |
-| Configure a11y tooling (eslint-plugin-jsx-a11y, vitest-axe) | AI executor                | Lint passes with plugin enabled; axe test on sample component runs |
-| Build auth login/register forms                             | AI executor                | Token persists; redirects work                                     |
-| Verify all tests pass                                       | Nick (manual verification) | Repo green; planted-bug checks pass                                |
+| Step                                  | Owner                      | Completion Signal                                                          |
+| ------------------------------------- | -------------------------- | -------------------------------------------------------------------------- |
+| Build auth login/register forms       | AI executor                | Token persists; login redirects to projects; logout clears token           |
+| Protect routes                        | AI executor                | Unauthenticated users redirected from `/projects` and `/projects/:id`      |
+| Identity rehydration (/users/me)      | AI executor                | Called on app start; user displayed in header                              |
+| Verify all tests pass                 | Nick (manual verification) | Repo green; planted-bug checks pass                                        |
 
 ## Execution Guidance
 
@@ -53,7 +51,7 @@ Scoping phases complete: API contract consumed (all 15 endpoints verified agains
 | Forms handling                | Controlled components initially; add react-hook-form + zod if complexity warrants          |
 | Drag-and-drop task reordering | Optional nice-to-have; defer until after CRUD works                                        |
 | Storybook                     | Defer to polish phase; optional                                                            |
-| ESLint version                | Pin to 9 if jsx-a11y lacks ESLint 10 support at scaffold time; track compatibility release |
+| ESLint version                | Pinned to 9 on 2026-10-01 (deviation logged in DECISIONS.md); ESLint 9 is EOL, so revisit when jsx-a11y supports 10 |
 
 ## Dependencies
 
