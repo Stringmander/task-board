@@ -43,7 +43,7 @@ Consumer-facing React/TypeScript frontend consuming the existing task-api backen
 | Forms           | Controlled components (or react-hook-form + zod if forms grow complex) | Start minimal, add only if forms hurt                                                  |
 | A11y lint       | eslint-plugin-jsx-a11y                                                 | 43 rules, author-time feedback; run from scaffold onward                               |
 | Testing         | Vitest + Testing Library + MSW + vitest-axe                            | Matches backend tooling; MSW mocks API at network layer; axe-core against rendered DOM |
-| Type generation | openapi-typescript                                                     | Generate from task-api's openapi.yaml; zero hand-typed interfaces                      |
+| Type generation | openapi-typescript                                                     | Generate from vendored `./openapi.yaml` (synced weekly from task-api via PR); zero hand-typed interfaces |
 
 ### Optional / Stretch Goal
 

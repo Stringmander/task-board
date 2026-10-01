@@ -1,0 +1,46 @@
+name: Sync OpenAPI spec
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-openapi
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Sync spec from task-api
+        id: sync
+        run: bash scripts/sync-openapi.sh
+
+      - name: Open or update sync PR
+        if: steps.sync.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: chore/sync-openapi
+          delete-branch: true
+          add-paths: openapi.yaml
+          commit-message: 'chore(api): sync openapi.yaml from task-api (${{ steps.sync.outputs.date }})'
+          title: 'chore(api): sync openapi.yaml from task-api (${{ steps.sync.outputs.date }})'
+          body: |
+            Upstream spec changed. Synced from [Stringmander/task-api@${{ steps.sync.outputs.sha }}](https://github.com/Stringmander/task-api/blob/${{ steps.sync.outputs.sha }}/openapi.yaml).
+
+            Before merging:
+            - [ ] Review the diff for breaking changes (removed fields, renamed paths, narrowed enums)
+            - [ ] Regenerate types (openapi-typescript) and confirm the app still type-checks
+
+            Opened automatically by `.github/workflows/sync-openapi.yml`.
+
+      - name: Report no changes
+        if: steps.sync.outputs.changed == 'false'
+        run: echo "openapi.yaml already matches task-api@${{ steps.sync.outputs.sha }}; nothing to commit." >> "$GITHUB_STEP_SUMMARY"

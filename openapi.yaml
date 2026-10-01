@@ -1,0 +1,702 @@
+# ---------------------------------------------------------------------------
+# VENDORED FILE - DO NOT EDIT BY HAND
+# Source:    https://github.com/Stringmander/task-api/blob/93b89e550ce276d6fb1643a379bbd04d464142db/openapi.yaml
+# Synced by: .github/workflows/sync-openapi.yml (weekly, Mon 06:00 UTC)
+# Last sync: 2026-10-01 (Stringmander/task-api@93b89e5)
+# Local edits are overwritten on the next sync; change the spec in task-api.
+# ---------------------------------------------------------------------------
+# --- end provenance header ---
+openapi: 3.0.0
+info:
+  title: task-api
+  description: >-
+    Task management REST API. Users own projects; projects contain tasks; access
+    is scoped to the authenticated user at every layer.
+  version: 0.1.0
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    def-0:
+      description: A project
+      type: object
+      required:
+        - id
+        - userId
+        - name
+        - description
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      title: projectResponseSchema
+    def-1:
+      description: A task
+      type: object
+      required:
+        - id
+        - projectId
+        - title
+        - description
+        - status
+        - priority
+        - dueDate
+        - position
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+        projectId:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum:
+            - todo
+            - in_progress
+            - done
+        priority:
+          type: string
+          enum:
+            - low
+            - medium
+            - high
+        dueDate:
+          type: string
+          nullable: true
+        position:
+          type: integer
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      title: taskResponseSchema
+paths:
+  /health:
+    get:
+      responses:
+        '200':
+          description: Liveness status
+          content:
+            application/json:
+              schema:
+                description: Liveness status
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+  /auth/register:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - displayName
+              additionalProperties: false
+              properties:
+                email:
+                  type: string
+                  format: email
+                  maxLength: 255
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 72
+                displayName:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+      responses:
+        '201':
+          description: The newly registered user
+          content:
+            application/json:
+              schema:
+                description: The newly registered user
+                type: object
+                required:
+                  - id
+                  - email
+                  - displayName
+                  - createdAt
+                properties:
+                  id:
+                    type: integer
+                  email:
+                    type: string
+                  displayName:
+                    type: string
+                  createdAt:
+                    type: string
+  /auth/login:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              additionalProperties: false
+              properties:
+                email:
+                  type: string
+                  format: email
+                  maxLength: 255
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 72
+      responses:
+        '200':
+          description: An access/refresh token pair
+          content:
+            application/json:
+              schema:
+                description: An access/refresh token pair
+                type: object
+                required:
+                  - accessToken
+                  - refreshToken
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+  /auth/refresh:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refreshToken
+              additionalProperties: false
+              properties:
+                refreshToken:
+                  type: string
+                  pattern: ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+                  maxLength: 2048
+      responses:
+        '200':
+          description: An access/refresh token pair
+          content:
+            application/json:
+              schema:
+                description: An access/refresh token pair
+                type: object
+                required:
+                  - accessToken
+                  - refreshToken
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+  /users/me:
+    get:
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: The current user
+          content:
+            application/json:
+              schema:
+                description: The current user
+                type: object
+                required:
+                  - id
+                  - email
+                  - displayName
+                properties:
+                  id:
+                    type: integer
+                  email:
+                    type: string
+                  displayName:
+                    type: string
+  /projects:
+    get:
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A list of projects
+          content:
+            application/json:
+              schema:
+                description: A list of projects
+                type: array
+                items:
+                  $ref: '#/components/schemas/def-0'
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                description:
+                  type: string
+                  nullable: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: A project
+          content:
+            application/json:
+              schema:
+                description: A project
+                type: object
+                required:
+                  - id
+                  - userId
+                  - name
+                  - description
+                  - createdAt
+                  - updatedAt
+                properties:
+                  id:
+                    type: integer
+                  userId:
+                    type: integer
+                  name:
+                    type: string
+                  description:
+                    type: string
+                    nullable: true
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+  /projects/{id}:
+    get:
+      parameters:
+        - schema:
+            type: string
+            pattern: ^[0-9]{1,15}$
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A project
+          content:
+            application/json:
+              schema:
+                description: A project
+                type: object
+                required:
+                  - id
+                  - userId
+                  - name
+                  - description
+                  - createdAt
+                  - updatedAt
+                properties:
+                  id:
+                    type: integer
+                  userId:
+                    type: integer
+                  name:
+                    type: string
+                  description:
+                    type: string
+                    nullable: true
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+    patch:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                description:
+                  type: string
+                  nullable: true
+      parameters:
+        - schema:
+            type: string
+            pattern: ^[0-9]{1,15}$
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A project
+          content:
+            application/json:
+              schema:
+                description: A project
+                type: object
+                required:
+                  - id
+                  - userId
+                  - name
+                  - description
+                  - createdAt
+                  - updatedAt
+                properties:
+                  id:
+                    type: integer
+                  userId:
+                    type: integer
+                  name:
+                    type: string
+                  description:
+                    type: string
+                    nullable: true
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+    delete:
+      parameters:
+        - schema:
+            type: string
+            pattern: ^[0-9]{1,15}$
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: No content
+  /projects/{id}/tasks:
+    get:
+      parameters:
+        - schema:
+            type: string
+            pattern: ^[0-9]{1,15}$
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A list of tasks
+          content:
+            application/json:
+              schema:
+                description: A list of tasks
+                type: array
+                items:
+                  $ref: '#/components/schemas/def-1'
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+              additionalProperties: false
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                description:
+                  type: string
+                  nullable: true
+                status:
+                  type: string
+                  enum:
+                    - todo
+                    - in_progress
+                    - done
+                priority:
+                  type: string
+                  enum:
+                    - low
+                    - medium
+                    - high
+                dueDate:
+                  type: string
+                  format: date
+                  nullable: true
+                position:
+                  type: integer
+      parameters:
+        - schema:
+            type: string
+            pattern: ^[0-9]{1,15}$
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: A task
+          content:
+            application/json:
+              schema:
+                description: A task
+                type: object
+                required:
+                  - id
+                  - projectId
+                  - title
+                  - description
+                  - status
+                  - priority
+                  - dueDate
+                  - position
+                  - createdAt
+                  - updatedAt
+                properties:
+                  id:
+                    type: integer
+                  projectId:
+                    type: integer
+                  title:
+                    type: string
+                  description:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    enum:
+                      - todo
+                      - in_progress
+                      - done
+                  priority:
+                    type: string
+                    enum:
+                      - low
+                      - medium
+                      - high
+                  dueDate:
+                    type: string
+                    nullable: true
+                  position:
+                    type: integer
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+  /tasks/{id}:
+    get:
+      parameters:
+        - schema:
+            type: string
+            pattern: ^[0-9]{1,15}$
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A task
+          content:
+            application/json:
+              schema:
+                description: A task
+                type: object
+                required:
+                  - id
+                  - projectId
+                  - title
+                  - description
+                  - status
+                  - priority
+                  - dueDate
+                  - position
+                  - createdAt
+                  - updatedAt
+                properties:
+                  id:
+                    type: integer
+                  projectId:
+                    type: integer
+                  title:
+                    type: string
+                  description:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    enum:
+                      - todo
+                      - in_progress
+                      - done
+                  priority:
+                    type: string
+                    enum:
+                      - low
+                      - medium
+                      - high
+                  dueDate:
+                    type: string
+                    nullable: true
+                  position:
+                    type: integer
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+    patch:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                description:
+                  type: string
+                  nullable: true
+                status:
+                  type: string
+                  enum:
+                    - todo
+                    - in_progress
+                    - done
+                priority:
+                  type: string
+                  enum:
+                    - low
+                    - medium
+                    - high
+                dueDate:
+                  type: string
+                  format: date
+                  nullable: true
+                position:
+                  type: integer
+      parameters:
+        - schema:
+            type: string
+            pattern: ^[0-9]{1,15}$
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A task
+          content:
+            application/json:
+              schema:
+                description: A task
+                type: object
+                required:
+                  - id
+                  - projectId
+                  - title
+                  - description
+                  - status
+                  - priority
+                  - dueDate
+                  - position
+                  - createdAt
+                  - updatedAt
+                properties:
+                  id:
+                    type: integer
+                  projectId:
+                    type: integer
+                  title:
+                    type: string
+                  description:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    enum:
+                      - todo
+                      - in_progress
+                      - done
+                  priority:
+                    type: string
+                    enum:
+                      - low
+                      - medium
+                      - high
+                  dueDate:
+                    type: string
+                    nullable: true
+                  position:
+                    type: integer
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+    delete:
+      parameters:
+        - schema:
+            type: string
+            pattern: ^[0-9]{1,15}$
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: No content

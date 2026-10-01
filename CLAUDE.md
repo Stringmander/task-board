@@ -23,6 +23,7 @@ Scoping phases complete: API contract consumed (all 16 endpoints verified agains
 | Stack decisions            | Vite + React selected after 2026 market-data verification; decision records logged in docs/DECISIONS.md |
 | Accessibility commitment   | WCAG 2.2 AA target; layered tooling plus manual verification; decision record logged                    |
 | Plan documents             | BUILD_PLAN.md and CLAUDE.md drafted and approved                                                        |
+| OpenAPI spec sync          | `./openapi.yaml` vendored from task-api; weekly GitHub Action opens a sync PR on upstream change        |
 
 ## What's Next
 

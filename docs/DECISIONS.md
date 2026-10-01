@@ -76,3 +76,41 @@ Semantic HTML first (~80% of a11y), focus management on route changes and modal 
 
 Approved by: Nick
 Review date: 2026-09-30
+
+---
+
+## 2026-10-01: OpenAPI Spec Sync Policy
+
+### Decision
+
+Vendor task-api's `openapi.yaml` into this repo and keep it current with a scheduled GitHub Action that opens a pull request when upstream changes.
+
+### Policy
+
+| Aspect           | Choice                                                                                          |
+| ---------------- | ----------------------------------------------------------------------------------------------- |
+| Location         | Repo root, `./openapi.yaml` (mirrors task-api's convention)                                     |
+| Source           | `Stringmander/task-api@main` (public; fetched anonymously, no secrets)                          |
+| Cadence          | Weekly, Monday 06:00 UTC, plus `workflow_dispatch` for manual runs after backend changes        |
+| Commit policy    | Pull request on branch `chore/sync-openapi`, never a direct commit to main                      |
+| Change signal    | The PR is the alert; the workflow stays green when upstream changes                             |
+| Change detection | Spec body compared with the provenance header stripped; unchanged upstream is a no-op          |
+| Provenance       | Header at top of `openapi.yaml` records source commit SHA and last-sync date                    |
+
+### Rationale
+
+1. **Review before merge** — Contract changes can break generated types. A PR gives a checkpoint to read the diff for breaking changes before they reach main.
+2. **One signal, not two** — Failing the run on change would duplicate the PR as an alert and paint every legitimate update red.
+3. **Weekly balances noise and drift** — Daily is mostly no-op runs while the backend is stable; manual dispatch covers urgent syncs.
+4. **Header excluded from comparison** — Otherwise the date stamp alone would register as a change every run.
+
+### Implementation
+
+- Workflow: `.github/workflows/sync-openapi.yml`
+- Logic: `scripts/sync-openapi.sh` (same script runs locally; run from repo root to sync on demand)
+- Never hand-edit `openapi.yaml`; change the spec in task-api.
+
+### Review
+
+Approved by: Nick
+Review date: 2026-10-01
