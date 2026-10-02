@@ -1,4 +1,5 @@
 import js from '@eslint/js'
+import eslintConfigPrettier from 'eslint-config-prettier'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
@@ -29,4 +30,6 @@ export default defineConfig([
       'react-refresh/only-export-components': 'off',
     },
   },
+  // Last: turns off stylistic rules that would conflict with Prettier.
+  eslintConfigPrettier,
 ])
