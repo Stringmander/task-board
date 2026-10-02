@@ -1,9 +1,9 @@
-import { createBrowserRouter, Navigate } from 'react-router'
-import { LoginPage } from '@/routes/login'
-import { ProjectDetailPage } from '@/routes/project-detail'
-import { ProjectsPage } from '@/routes/projects'
-import { RegisterPage } from '@/routes/register'
-import { RootLayout } from '@/routes/root-layout'
+import { createBrowserRouter, Navigate } from 'react-router';
+import { LoginPage } from '@/routes/login';
+import { ProjectDetailPage } from '@/routes/project-detail';
+import { ProjectsPage } from '@/routes/projects';
+import { RegisterPage } from '@/routes/register';
+import { RootLayout } from '@/routes/root-layout';
 
 export const router = createBrowserRouter([
   {
@@ -17,4 +17,4 @@ export const router = createBrowserRouter([
       { path: 'projects/:id', element: <ProjectDetailPage /> },
     ],
   },
-])
+]);

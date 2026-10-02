@@ -96,15 +96,15 @@ Vendor task-api's `openapi.yaml` into this repo and keep it current with a sched
 
 ### Policy
 
-| Aspect           | Choice                                                                                          |
-| ---------------- | ----------------------------------------------------------------------------------------------- |
-| Location         | Repo root, `./openapi.yaml` (mirrors task-api's convention)                                     |
-| Source           | `Stringmander/task-api@main` (public; fetched anonymously, no secrets)                          |
-| Cadence          | Weekly, Monday 06:00 UTC, plus `workflow_dispatch` for manual runs after backend changes        |
-| Commit policy    | Pull request on branch `chore/sync-openapi`, never a direct commit to main                      |
-| Change signal    | The PR is the alert; the workflow stays green when upstream changes                             |
-| Change detection | Spec body compared with the provenance header stripped; unchanged upstream is a no-op          |
-| Provenance       | Header at top of `openapi.yaml` records source commit SHA and last-sync date                    |
+| Aspect           | Choice                                                                                   |
+| ---------------- | ---------------------------------------------------------------------------------------- |
+| Location         | Repo root, `./openapi.yaml` (mirrors task-api's convention)                              |
+| Source           | `Stringmander/task-api@main` (public; fetched anonymously, no secrets)                   |
+| Cadence          | Weekly, Monday 06:00 UTC, plus `workflow_dispatch` for manual runs after backend changes |
+| Commit policy    | Pull request on branch `chore/sync-openapi`, never a direct commit to main               |
+| Change signal    | The PR is the alert; the workflow stays green when upstream changes                      |
+| Change detection | Spec body compared with the provenance header stripped; unchanged upstream is a no-op    |
+| Provenance       | Header at top of `openapi.yaml` records source commit SHA and last-sync date             |
 
 ### Rationale
 
@@ -140,11 +140,11 @@ Hold the access token in memory only and persist the refresh token in localStora
 
 ### Alternatives Considered
 
-| Option                                      | Reason Rejected (for now)                                                                                                    |
-| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Both tokens in localStorage                 | Same XSS exposure as the chosen option, plus a possibly-expired access token in storage on boot                              |
-| Refresh token in httpOnly cookie            | Strongest option, but requires a task-api change (cookie handling, CORS credentials, contract change, tests); out of Phase 4 scope |
-| Both tokens in memory only                  | Logs the user out on every reload                                                                                            |
+| Option                           | Reason Rejected (for now)                                                                                                          |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Both tokens in localStorage      | Same XSS exposure as the chosen option, plus a possibly-expired access token in storage on boot                                    |
+| Refresh token in httpOnly cookie | Strongest option, but requires a task-api change (cookie handling, CORS credentials, contract change, tests); out of Phase 4 scope |
+| Both tokens in memory only       | Logs the user out on every reload                                                                                                  |
 
 ### Rationale
 

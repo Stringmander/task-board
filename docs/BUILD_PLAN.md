@@ -38,20 +38,20 @@ Consumer-facing React/TypeScript frontend consuming the existing task-api backen
 
 ### Supporting
 
-| Layer           | Choice                                                                 | Notes                                                                                  |
-| --------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Forms           | Controlled components (or react-hook-form + zod if forms grow complex) | Start minimal, add only if forms hurt                                                  |
+| Layer           | Choice                                                                 | Notes                                                                                                    |
+| --------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Forms           | Controlled components (or react-hook-form + zod if forms grow complex) | Start minimal, add only if forms hurt                                                                    |
 | Formatting      | Prettier 3 + eslint-config-prettier                                    | `.prettierrc.json` mirrors task-api; `openapi.yaml` and generated `schema.d.ts` excluded                 |
-| A11y lint       | eslint-plugin-jsx-a11y                                                 | 43 rules, author-time feedback; run from scaffold onward                               |
-| Testing         | Vitest + Testing Library + MSW + vitest-axe                            | Matches backend tooling; MSW mocks API at network layer; axe-core against rendered DOM |
+| A11y lint       | eslint-plugin-jsx-a11y                                                 | 43 rules, author-time feedback; run from scaffold onward                                                 |
+| Testing         | Vitest + Testing Library + MSW + vitest-axe                            | Matches backend tooling; MSW mocks API at network layer; axe-core against rendered DOM                   |
 | Type generation | openapi-typescript                                                     | Generate from vendored `./openapi.yaml` (synced weekly from task-api via PR); zero hand-typed interfaces |
 
 ### Post-Ship Upgrades (Priority Order)
 
-| Priority | Layer                   | Choice                                                     | When to add                                              |
-| -------- | ----------------------- | ---------------------------------------------------------- | -------------------------------------------------------- |
-| 1        | Refresh token hardening | httpOnly cookie for refresh token (task-api change)        | After core ship; before Storybook (see DECISIONS.md)     |
-| 2        | Component gallery       | Storybook (with @storybook/addon-a11y)                     | After core ship; polish phase only; optional             |
+| Priority | Layer                   | Choice                                              | When to add                                          |
+| -------- | ----------------------- | --------------------------------------------------- | ---------------------------------------------------- |
+| 1        | Refresh token hardening | httpOnly cookie for refresh token (task-api change) | After core ship; before Storybook (see DECISIONS.md) |
+| 2        | Component gallery       | Storybook (with @storybook/addon-a11y)              | After core ship; polish phase only; optional         |
 
 ## Architecture Principles
 

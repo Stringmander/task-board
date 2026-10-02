@@ -28,12 +28,12 @@ Scoping phases complete: API contract consumed (all 15 endpoints verified agains
 
 ## What's Next
 
-| Step                                  | Owner                      | Completion Signal                                                          |
-| ------------------------------------- | -------------------------- | -------------------------------------------------------------------------- |
-| Build auth login/register forms       | AI executor                | Token persists; login redirects to projects; logout clears token           |
-| Protect routes                        | AI executor                | Unauthenticated users redirected from `/projects` and `/projects/:id`      |
-| Identity rehydration (/users/me)      | AI executor                | Called on app start; user displayed in header                              |
-| Verify all tests pass                 | Nick (manual verification) | Repo green; planted-bug checks pass                                        |
+| Step                             | Owner                      | Completion Signal                                                     |
+| -------------------------------- | -------------------------- | --------------------------------------------------------------------- |
+| Build auth login/register forms  | AI executor                | Token persists; login redirects to projects; logout clears token      |
+| Protect routes                   | AI executor                | Unauthenticated users redirected from `/projects` and `/projects/:id` |
+| Identity rehydration (/users/me) | AI executor                | Called on app start; user displayed in header                         |
+| Verify all tests pass            | Nick (manual verification) | Repo green; planted-bug checks pass                                   |
 
 ## Execution Guidance
 
@@ -46,13 +46,13 @@ Scoping phases complete: API contract consumed (all 15 endpoints verified agains
 
 ## Open Questions
 
-| Question                      | Answer                                                                                     |
-| ----------------------------- | ------------------------------------------------------------------------------------------ |
-| Forms handling                | Controlled components initially; add react-hook-form + zod if complexity warrants          |
-| Drag-and-drop task reordering | Optional nice-to-have; defer until after CRUD works                                        |
-| Storybook                     | Defer to polish phase; optional                                                            |
+| Question                      | Answer                                                                                                                                    |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Forms handling                | Controlled components initially; add react-hook-form + zod if complexity warrants                                                         |
+| Drag-and-drop task reordering | Optional nice-to-have; defer until after CRUD works                                                                                       |
+| Storybook                     | Defer to polish phase; optional                                                                                                           |
 | Token storage                 | Access token in memory, refresh token in localStorage (2026-10-02 decision record); httpOnly cookie upgrade post-ship, ahead of Storybook |
-| ESLint version                | Pinned to 9 on 2026-10-01 (deviation logged in DECISIONS.md); ESLint 9 is EOL, so revisit when jsx-a11y supports 10 |
+| ESLint version                | Pinned to 9 on 2026-10-01 (deviation logged in DECISIONS.md); ESLint 9 is EOL, so revisit when jsx-a11y supports 10                       |
 
 ## Dependencies
 

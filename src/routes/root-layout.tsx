@@ -1,11 +1,11 @@
-import { NavLink, Outlet } from 'react-router'
-import { ApiStatus } from '@/components/api-status'
+import { NavLink, Outlet } from 'react-router';
+import { ApiStatus } from '@/components/api-status';
 
 const links = [
   { to: '/login', label: 'Login' },
   { to: '/register', label: 'Register' },
   { to: '/projects', label: 'Projects' },
-]
+];
 
 export function RootLayout() {
   return (
@@ -33,5 +33,5 @@ export function RootLayout() {
         <Outlet />
       </main>
     </div>
-  )
+  );
 }
