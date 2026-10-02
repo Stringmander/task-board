@@ -41,7 +41,7 @@ Scoping phases complete: API contract consumed (all 15 endpoints verified agains
 - **Verification**: Nick runs verification passes on each session; planted-bug checks asserted before commit
 - **Docs**: Same-session updates to BUILD_PLAN.md, CLAUDE.md, README when decisions change
 - **Accessibility**: jsx-a11y lint from scaffold; vitest-axe with test setup; manual keyboard/screen reader pass is a Phase 6 ship gate
-- **Storybook**: Logged as stretch goal in polish phase only
+- **Storybook**: Logged as stretch goal in polish phase only; ranks below refresh-token cookie hardening
 - **API types**: `npm run generate:api` regenerates `src/api/schema.d.ts` from `./openapi.yaml` (openapi-typescript). Rerun and commit after merging each OpenAPI sync PR; never hand-edit the generated file
 
 ## Open Questions
@@ -51,6 +51,7 @@ Scoping phases complete: API contract consumed (all 15 endpoints verified agains
 | Forms handling                | Controlled components initially; add react-hook-form + zod if complexity warrants          |
 | Drag-and-drop task reordering | Optional nice-to-have; defer until after CRUD works                                        |
 | Storybook                     | Defer to polish phase; optional                                                            |
+| Token storage                 | Access token in memory, refresh token in localStorage (2026-10-02 decision record); httpOnly cookie upgrade post-ship, ahead of Storybook |
 | ESLint version                | Pinned to 9 on 2026-10-01 (deviation logged in DECISIONS.md); ESLint 9 is EOL, so revisit when jsx-a11y supports 10 |
 
 ## Dependencies

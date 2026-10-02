@@ -123,3 +123,47 @@ Vendor task-api's `openapi.yaml` into this repo and keep it current with a sched
 
 Approved by: Nick
 Review date: 2026-10-01
+
+---
+
+## 2026-10-02: Auth Token Storage — Access in Memory, Refresh in localStorage
+
+### Decision
+
+Hold the access token in memory only and persist the refresh token in localStorage. On app start, exchange the refresh token for a fresh pair, then call `GET /users/me`. Upgrade path: move the refresh token to an httpOnly cookie after core ship.
+
+### Constraints (from task-api, verified 2026-10-02)
+
+- Access token: 15-minute JWT (`src/lib/tokens.ts`)
+- Refresh token: 7-day JWT, single-use; `/auth/refresh` deletes the presented token and issues a new pair in one atomic statement, so concurrent refreshes with the same token mean one gets a 401
+- Both tokens travel in JSON bodies; task-api sets no cookies, so any client-side storage is script-readable
+
+### Alternatives Considered
+
+| Option                                      | Reason Rejected (for now)                                                                                                    |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Both tokens in localStorage                 | Same XSS exposure as the chosen option, plus a possibly-expired access token in storage on boot                              |
+| Refresh token in httpOnly cookie            | Strongest option, but requires a task-api change (cookie handling, CORS credentials, contract change, tests); out of Phase 4 scope |
+| Both tokens in memory only                  | Logs the user out on every reload                                                                                            |
+
+### Rationale
+
+1. **Deterministic boot** — Every load runs refresh → `/users/me`, which is exactly the identity-rehydration milestone; no stale access token to trip over.
+2. **Upgrade-shaped** — `token-store.ts` exposes get/set/clear, so moving the refresh token to a cookie touches only the store and the refresh call.
+3. **Honest threat model** — Security gain over all-localStorage is marginal: a stolen refresh token still mints access tokens for up to 7 days. No storage choice stops XSS from acting within an open tab; httpOnly only stops exfiltration of a durable session. Primary XSS defence remains not having XSS (React escaping, no `dangerouslySetInnerHTML`, lean dependencies).
+
+### Implementation Notes
+
+- `src/auth/token-store.ts` — plain module (not React state) so `apiFetch` can read tokens; `AuthProvider` context wraps it for re-renders. Clarifies BUILD_PLAN.md Architecture Principle 2.
+- `src/api/client.ts` — attaches `Authorization: Bearer`; on 401, refresh once and retry.
+- **Single-flight refresh, in-tab and cross-tab.** Rotation makes concurrent refreshes destructive. Dedupe in-tab with a shared promise; serialize across tabs with `navigator.locks.request('token-refresh', …)` and re-read localStorage after acquiring the lock in case another tab already rotated.
+- Logout is client-only (no endpoint): clear the store and the TanStack Query cache.
+
+### Upgrade Path
+
+Refresh token to httpOnly, Secure, SameSite cookie set by task-api. **Priority: first post-ship upgrade, ahead of Storybook** (Nick, 2026-10-02). Requires a task-api change and contract update, which will arrive here through the OpenAPI sync PR.
+
+### Review
+
+Approved by: Nick
+Review date: 2026-10-02

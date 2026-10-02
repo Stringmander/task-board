@@ -45,16 +45,17 @@ Consumer-facing React/TypeScript frontend consuming the existing task-api backen
 | Testing         | Vitest + Testing Library + MSW + vitest-axe                            | Matches backend tooling; MSW mocks API at network layer; axe-core against rendered DOM |
 | Type generation | openapi-typescript                                                     | Generate from vendored `./openapi.yaml` (synced weekly from task-api via PR); zero hand-typed interfaces |
 
-### Optional / Stretch Goal
+### Post-Ship Upgrades (Priority Order)
 
-| Layer             | Choice                                 | When to add                        |
-| ----------------- | -------------------------------------- | ---------------------------------- |
-| Component gallery | Storybook (with @storybook/addon-a11y) | After core ship; polish phase only |
+| Priority | Layer                   | Choice                                                     | When to add                                              |
+| -------- | ----------------------- | ---------------------------------------------------------- | -------------------------------------------------------- |
+| 1        | Refresh token hardening | httpOnly cookie for refresh token (task-api change)        | After core ship; before Storybook (see DECISIONS.md)     |
+| 2        | Component gallery       | Storybook (with @storybook/addon-a11y)                     | After core ship; polish phase only; optional             |
 
 ## Architecture Principles
 
 1. **Types from contract** — All data types generated from openapi.yaml; drift impossible by construction
-2. **Minimal client state** — No global state library; auth tokens live in small context provider
+2. **Minimal client state** — No global state library; tokens live in a plain module (`token-store.ts`) so the non-React fetch client can read them, with a small context provider on top so components re-render on login/logout
 3. **Ownership over convenience** — shadcn/ui components copied into repo, not installed as dependency
 4. **Verification-first** — Planted-bug checks on any test suite; every session ends green
 5. **Document decisions same-session** — When a choice changes, update BUILD_PLAN.md, CLAUDE.md, README together
