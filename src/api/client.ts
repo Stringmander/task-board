@@ -24,6 +24,9 @@ type RefreshResponse =
   paths['/auth/refresh']['post']['responses'][200]['content']['application/json'];
 
 // POST /auth/refresh. Store the new pair on success; clear tokens on failure.
+// Uses plain fetch, not apiFetch: no Bearer header belongs on this call, and
+// it must never trigger its own refresh. A network failure rejects without
+// clearing tokens, since an unreachable server doesn't mean the session is dead.
 async function requestNewTokens(): Promise<boolean> {
   const refreshToken = getRefreshToken();
   if (!refreshToken) return false;
@@ -47,6 +50,9 @@ async function requestNewTokens(): Promise<boolean> {
 let refreshPromise: Promise<boolean> | null = null;
 
 // Return the in-flight refresh if there is one; otherwise start one.
+// Sharing is required, not an optimisation: refresh tokens are single-use, so a
+// second concurrent refresh would present an already-rotated token, get a 401,
+// and log the user out.
 function refreshOnce(): Promise<boolean> {
   refreshPromise ??= requestNewTokens().finally(() => {
     refreshPromise = null;
@@ -66,7 +72,7 @@ export async function apiFetch(path: string, init: ApiInit = {}): Promise<Respon
   const res = await send(path, init);
 
   if (res.status !== 401) return res;
-  if (path.startsWith('/auth/')) return res;
+  if (path.startsWith('/auth/')) return res; // here a 401 means bad credentials, not expiry
 
   const refreshed = await refreshOnce();
   if (!refreshed) return res;
