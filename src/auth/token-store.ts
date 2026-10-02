@@ -34,7 +34,7 @@ export function setTokens(tokens: Tokens | null): void {
 
 export function clearTokens(): void {
   accessToken = null;
-  // localStorage.removeItem(REFRESH_KEY);
+  localStorage.removeItem(REFRESH_KEY);
   notify();
 }
 
