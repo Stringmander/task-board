@@ -1,17 +1,12 @@
 // Transport layer: every request to task-api goes through apiFetch. Knows URLs,
 // headers and tokens; knows nothing about React or caching (endpoint functions
-// and TanStack Query hooks sit on top). Refresh-on-401 will live here too.
+// and TanStack Query hooks sit on top). Also owns refresh-on-401.
 
-import { getAccessToken } from '@/auth/token-store';
+import { clearTokens, getAccessToken, getRefreshToken, setTokens } from '@/auth/token-store';
 import { API_BASE_URL } from '@/lib/config';
+import type { paths } from './schema';
 
-// Mirrors fetch's signature and contract: resolves with the raw Response for
-// any HTTP status, rejecting only on network failure. Callers check res.ok.
-//
-// `async` is deliberate despite there being no await: `new Headers()` throws
-// synchronously on an invalid header name, and async turns that into a
-// rejection, so callers (and TanStack Query) see a single failure channel.
-export async function apiFetch(path: string, init: RequestInit = {}): Promise<Response> {
+async function send(path: string, init: RequestInit): Promise<Response> {
   // Copy into a Headers object rather than spreading: init.headers may be an
   // object, an array of pairs or a Headers instance, and `{ ...init, headers: {...} }`
   // would replace the caller's headers instead of merging with them.
@@ -23,4 +18,57 @@ export async function apiFetch(path: string, init: RequestInit = {}): Promise<Re
   }
 
   return fetch(`${API_BASE_URL}${path}`, { ...init, headers });
+}
+
+type RefreshResponse =
+  paths['/auth/refresh']['post']['responses'][200]['content']['application/json'];
+
+// POST /auth/refresh. Store the new pair on success; clear tokens on failure.
+async function requestNewTokens(): Promise<boolean> {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) return false;
+
+  const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refreshToken }),
+  });
+
+  if (!res.ok) {
+    clearTokens();
+    return false;
+  }
+
+  const payload: RefreshResponse = await res.json();
+  setTokens({ accessToken: payload.accessToken, refreshToken: payload.refreshToken });
+  return true;
+}
+
+let refreshPromise: Promise<boolean> | null = null;
+
+// Return the in-flight refresh if there is one; otherwise start one.
+function refreshOnce(): Promise<boolean> {
+  refreshPromise ??= requestNewTokens().finally(() => {
+    refreshPromise = null;
+  });
+  return refreshPromise;
+}
+
+// No stream bodies: a 401 retry resends init.body, and a stream can only be read once.
+type ApiInit = Omit<RequestInit, 'body'> & {
+  body?: Exclude<BodyInit, ReadableStream>;
+};
+
+// Mirrors fetch's signature and contract: resolves with the raw Response for
+// any HTTP status, rejecting only on network failure. Callers check res.ok.
+// A 401 triggers at most one shared refresh and one retry.
+export async function apiFetch(path: string, init: ApiInit = {}): Promise<Response> {
+  const res = await send(path, init);
+
+  if (res.status !== 401) return res;
+  if (path.startsWith('/auth/')) return res;
+
+  const refreshed = await refreshOnce();
+  if (!refreshed) return res;
+  return send(path, init);
 }
